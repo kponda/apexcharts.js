@@ -15656,6 +15656,7 @@ function () {
             };
           }
         });
+        var selectionEventHandler = w.config.chart.events.selection;
 
         w.config.chart.events.selection = function (chart, e) {
           targets.forEach(function (target) {
@@ -15675,6 +15676,10 @@ function () {
               yaxis: yaxis
             }, false, false, false, false);
           });
+
+          if (typeof selectionEventHandler == 'function') {
+            selectionEventHandler();
+          }
         };
       }
     }

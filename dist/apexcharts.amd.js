@@ -19285,6 +19285,7 @@ var Core = function () {
           }
         });
 
+        var selectionEventHandler = w.config.chart.events.selection;
         w.config.chart.events.selection = function (chart, e) {
           targets.forEach(function (target) {
             var targetChart = ApexCharts.getChartByID(target);
@@ -19301,6 +19302,9 @@ var Core = function () {
               yaxis: yaxis
             }, false, false, false, false);
           });
+          if (typeof selectionEventHandler == 'function') {
+            selectionEventHandler();
+          }
         };
       }
     }
