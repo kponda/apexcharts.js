@@ -1116,7 +1116,7 @@ export default class Core {
           )
         })
         if (typeof selectionEventHandler == 'function') {
-          selectionEventHandler()
+          selectionEventHandler(e);
         }
       }
     }

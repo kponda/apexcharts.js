@@ -19303,7 +19303,7 @@ var Core = function () {
             }, false, false, false, false);
           });
           if (typeof selectionEventHandler == 'function') {
-            selectionEventHandler();
+            selectionEventHandler(e);
           }
         };
       }

@@ -15678,7 +15678,7 @@ function () {
           });
 
           if (typeof selectionEventHandler == 'function') {
-            selectionEventHandler();
+            selectionEventHandler(e);
           }
         };
       }
