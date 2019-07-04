@@ -15676,7 +15676,7 @@ function () {
           });
 
           if (typeof selectionEventHandler == 'function') {
-            selectionEventHandler(e);
+            selectionEventHandler(chart, e);
           }
         };
       }
