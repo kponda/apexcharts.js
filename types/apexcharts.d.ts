@@ -93,7 +93,8 @@ type ApexChart = {
   brush?: {
     enabled?: boolean;
     autoScaleYaxis?: boolean,
-    target?: string;
+    target?: string,
+    withSelectionEvent?: boolean,
   };
   id?: string;
   locales?: ApexLocale[];

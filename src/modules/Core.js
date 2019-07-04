@@ -1052,7 +1052,10 @@ export default class Core {
 
     // if user has not defined a custom function for selection - we handle the brush chart
     // otherwise we leave it to the user to define the functionality for selection
-    if (typeof w.config.chart.events.selection !== 'function') {
+    if (
+      w.config.chart.brush.withSelectionEvent ||
+      typeof w.config.chart.events.selection !== 'function'
+    ) {
       let targets = w.config.chart.brush.targets || [
         w.config.chart.brush.target
       ]
