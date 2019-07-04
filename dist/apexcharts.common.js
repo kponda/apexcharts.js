@@ -4256,6 +4256,7 @@ function () {
     value: function getStackedSeriesTotals() {
       var w = this.w;
       var total = [];
+      if (w.globals.series.length === 0) return total;
 
       for (var i = 0; i < w.globals.series[w.globals.maxValsInArrayIndex].length; i++) {
         var t = 0;
@@ -4612,7 +4613,6 @@ function () {
         }, opts);
       }
 
-      opts.series = this.checkEmptySeries(opts.series);
       opts = this.extendYAxis(opts);
       opts = this.extendAnnotations(opts);
       var config = options.init();
@@ -4797,17 +4797,6 @@ function () {
           opts.theme.palette = 'palette4';
         }
       }
-    }
-  }, {
-    key: "checkEmptySeries",
-    value: function checkEmptySeries(ser) {
-      if (ser.length === 0) {
-        return [{
-          data: []
-        }];
-      }
-
-      return ser;
     }
   }, {
     key: "handleUserInputErrors",
@@ -8897,7 +8886,11 @@ function () {
       var w = this.w;
       var fill = new Fill(this.ctx);
       var allSeries = [];
-      this.dataPointsLen = series[w.globals.maxValsInArrayIndex].length;
+
+      if (series.length) {
+        this.dataPointsLen = series[w.globals.maxValsInArrayIndex].length;
+      }
+
       this.disAngle = Math.PI * 2 / this.dataPointsLen;
       var halfW = w.globals.gridWidth / 2;
       var halfH = w.globals.gridHeight / 2;
@@ -13633,24 +13626,26 @@ function () {
         var stackedPoss = [];
         var stackedNegs = [];
 
-        for (var j = 0; j < gl.series[gl.maxValsInArrayIndex].length; j++) {
-          var poss = 0;
-          var negs = 0;
+        if (gl.series.length) {
+          for (var j = 0; j < gl.series[gl.maxValsInArrayIndex].length; j++) {
+            var poss = 0;
+            var negs = 0;
 
-          for (var _i = 0; _i < gl.series.length; _i++) {
-            if (gl.series[_i][j] !== null && Utils.isNumber(gl.series[_i][j])) {
-              if (gl.series[_i][j] > 0) {
-                // 0.0001 fixes #185 when values are very small
-                poss = poss + parseFloat(gl.series[_i][j]) + 0.0001;
-              } else {
-                negs = negs + parseFloat(gl.series[_i][j]);
+            for (var _i = 0; _i < gl.series.length; _i++) {
+              if (gl.series[_i][j] !== null && Utils.isNumber(gl.series[_i][j])) {
+                if (gl.series[_i][j] > 0) {
+                  // 0.0001 fixes #185 when values are very small
+                  poss = poss + parseFloat(gl.series[_i][j]) + 0.0001;
+                } else {
+                  negs = negs + parseFloat(gl.series[_i][j]);
+                }
               }
-            }
 
-            if (_i === gl.series.length - 1) {
-              // push all the totals to the array for future use
-              stackedPoss.push(poss);
-              stackedNegs.push(negs);
+              if (_i === gl.series.length - 1) {
+                // push all the totals to the array for future use
+                stackedPoss.push(poss);
+                stackedNegs.push(negs);
+              }
             }
           }
         } // get the max/min out of the added parallel values
@@ -15474,8 +15469,10 @@ function () {
 
         if (gl.axisCharts) {
           // for axis charts, we get the longest series and create labels from it
-          for (var i = 0; i < gl.series[gl.maxValsInArrayIndex].length; i++) {
-            labelArr.push(i + 1);
+          if (gl.series.length > 0) {
+            for (var i = 0; i < gl.series[gl.maxValsInArrayIndex].length; i++) {
+              labelArr.push(i + 1);
+            }
           } // create gl.seriesX as it will be used in calculations of x positions
 
 
@@ -15627,7 +15624,7 @@ function () {
       // otherwise we leave it to the user to define the functionality for selection
 
 
-      if (typeof w.config.chart.events.selection !== 'function') {
+      if (w.config.chart.brush.withSelectionEvent || typeof w.config.chart.events.selection !== 'function') {
         var targets = w.config.chart.brush.targets || [w.config.chart.brush.target]; // retro compatibility with single target option
 
         targets.forEach(function (target) {
@@ -18794,7 +18791,7 @@ function () {
         return;
       }
 
-      if (Array.isArray(this.tConfig.enabledOnSeries)) {
+      if (Array.isArray(this.tConfig.enabledOnSeries) && !w.config.tooltip.shared) {
         var index = parseInt(opt.paths.getAttribute('index'));
 
         if (this.tConfig.enabledOnSeries.indexOf(index) < 0) {
@@ -28791,6 +28788,16 @@ function () {
         case 'toggleSeries':
           {
             return chart.toggleSeries.apply(chart, opts);
+          }
+
+        case 'resetSeries':
+          {
+            return chart.resetSeries.apply(chart, opts);
+          }
+
+        case 'toggleDataPointSelection':
+          {
+            return chart.toggleDataPointSelection.apply(chart, opts);
           }
 
         case 'dataURI':
