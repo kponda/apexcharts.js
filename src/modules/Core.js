@@ -1092,6 +1092,7 @@ export default class Core {
         }
       })
 
+      const selectionEventHandler = w.config.chart.events.selection
       w.config.chart.events.selection = (chart, e) => {
         targets.forEach((target) => {
           let targetChart = ApexCharts.getChartByID(target)
@@ -1114,6 +1115,9 @@ export default class Core {
             false
           )
         })
+        if (typeof selectionEventHandler == 'function') {
+          selectionEventHandler()
+        }
       }
     }
   }
